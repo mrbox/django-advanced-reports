@@ -142,8 +142,9 @@ $(function(){
                 if (checkbox && checkbox.attr('id')) {
                     var id = checkbox.attr('id').replace('checkbox_', '');
                     var hidden = $('#hidden_checkbox_' + id);
+
                     if (hidden.length <= 0) {
-                        $('#advreport_' + instance.adv_slug + ' form.multiple-action-form select').before(
+                        $('#advreport_' + instance.adv_slug + ' form.multiple-action-form #select-method').before(
                             $('<input type="hidden" />').attr('name', 'checkbox_0000_' + id)
                                         .attr('id', 'hidden_checkbox_' + id)
                                         .attr('value', false)
