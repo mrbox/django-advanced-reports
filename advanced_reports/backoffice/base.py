@@ -521,6 +521,9 @@ class ModelMixin(object):
         model_slug = request.view_params.get('model_slug')
         pk = request.view_params.get('pk')
         bo_model = self.get_model(slug=model_slug)
+        if not bo_model:
+            return HttpResponse(u"Page you've requested doesn't exist.", status=404)
+
         if not check_permission(request, bo_model.permission):
             return HttpResponse(u'You are not allowed to view this page.', status=403)
         obj = bo_model.model.objects.get(pk=pk)
