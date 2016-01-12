@@ -1,0 +1,27 @@
+data:
+  image: alpine
+  command: "echo 'OK'"
+  volumes:
+    - /data/static
+    - .:/data/src
+db:
+  image: postgres
+app:
+  build: .
+  command: dev
+  environment:
+    - PORT=8000
+  ports:
+    - "9007:8000"
+  volumes_from:
+    - data
+  links:
+    - db
+proxy:
+  image: vikingco/nginx
+  volumes_from:
+    - data
+  ports:
+    - "9006:80"
+  links:
+    - app
