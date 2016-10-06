@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+
+import itertools
+
 from django import forms
 from django.contrib import messages
 from django.core.urlresolvers import reverse
@@ -6,17 +9,16 @@ from django.http import HttpResponse, Http404, StreamingHttpResponse
 from django.shortcuts import render_to_response, redirect
 from django.template.context import RequestContext
 from django.template.loader import render_to_string
-from django.utils.html import strip_entities, strip_tags
+from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
-import itertools
-
-import six
+from django.utils import six
 
 from .backoffice.api_utils import JSONResponse
 from .decorators import conditional_delegation, report_view
 from .defaults import ActionException, Resolver
 from .utils import paginate
+
 
 def _get_redirect(advreport, next=None, querystring=None):
     if next:
@@ -67,7 +69,7 @@ def list(request, advreport, ids=None, internal_mode=False, report_header_visibl
                 messages.error(request, _(u'No selected %(object)s is applicable for this action.') % {'object': advreport.verbose_name})
             if not advreport.internal_mode:
                 return _get_redirect(advreport, querystring=request.META['QUERY_STRING'])
-        except ActionException, e:
+        except ActionException as e:
             context.update({'error': e.msg})
 
 
@@ -94,7 +96,6 @@ def list(request, advreport, ids=None, internal_mode=False, report_header_visibl
         lines = (line.replace(u'&nbsp;', u' ') for line in lines)
         lines = (line.replace(u'&euro;', u'€') for line in lines)
         lines = (line.replace(u'<br/>', u' ') for line in lines)
-        lines = (strip_entities(line) for line in lines)
         lines = (strip_tags(line).encode('utf-8') for line in lines)
         #csv.write(header)
         #csv.writelines(lines)
@@ -200,7 +201,7 @@ def ajax(request, advreport, method, object_id, param=None):
 
             return render_to_response(advreport.item_template, context, context_instance=RequestContext(request))
 
-    except ActionException, e:
+    except ActionException as e:
         return HttpResponse(e.msg, status=404)
 
     # a.form is not None but not a POST request
@@ -392,7 +393,7 @@ def api_action(request, advreport, method, object_id=None):
             # The actual action method call
             try:
                 response = advreport.get_action_callable(a.method)(*action_args)
-            except ActionException, e:
+            except ActionException as e:
                 return HttpResponse(e.msg, status=404)
 
             # If we have a response, this means we can stop the normal flow and return the response

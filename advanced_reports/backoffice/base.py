@@ -1,5 +1,5 @@
 from collections import defaultdict
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import login
@@ -913,7 +913,7 @@ class BackOfficeBase(ViewMixin, SearchMixin, ModelMixin):
 
         :return: a tuple/list of url patterns (not using ``patterns()``!)
         """
-        return ()
+        return []
 
     @property
     def urls(self):
@@ -923,7 +923,8 @@ class BackOfficeBase(ViewMixin, SearchMixin, ModelMixin):
 
         :return: url patterns
         """
-        return patterns('',
+
+        return [
                         url(r'^$', self.decorate(self.home), name='home'),
                         url(r'^logout/$', self.logout, name='logout'),
                         url(r'^api/(?P<method>[^/]+)/$', self.decorate(self.api), name='api'),
@@ -931,8 +932,8 @@ class BackOfficeBase(ViewMixin, SearchMixin, ModelMixin):
                         url(r'^login/as/(?P<user_id>\d+)/$', self.decorate(self.login_as), name='login_as'),
                         url(r'^end/login/as/$', self.end_login_as, name='end_login_as'),
                         url(r'^handle/$', self.handle, name='handle'),
-                        *self.define_urls()
-        ), self.app_name, self.name
+
+        ] + self.define_urls(), self.app_name, self.name
 
     def decorate(self, view):
         """

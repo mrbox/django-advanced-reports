@@ -307,6 +307,8 @@ class AdvancedReport(object):
     #: Required. A unique url-friendly name for your Advanced Report
     slug = AutoSlug(remove_suffix='Report')
 
+    name = str(slug)
+
     #: The request. A new ``AdvancedReport`` instance is created on each request. This request will be saved to this
     #: property, so you can access it anywhere you need it.
     request = None
